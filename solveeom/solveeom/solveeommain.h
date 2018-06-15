@@ -60,6 +60,14 @@ extern "C" {
     */
     DLLEXPORT void __stdcall init(float l, float r, float theta0);
 
+	//! A global function.
+	/*!
+		運動エネルギーを求める
+		\param v 速度
+		\return 運動エネルギー
+	*/
+	DLLEXPORT float __stdcall kinetic_energy(double v);
+
     //! A global function.
     /*!
         次のステップを計算する
@@ -67,6 +75,14 @@ extern "C" {
         \return 新しい角度θの値
     */
     DLLEXPORT float __stdcall nextstep(float dt);
+
+	//! A global function.
+	/*!
+		ポテンシャルエネルギーを求める
+		\param theta 角度
+		\return ポテンシャルエネルギー
+	*/
+	DLLEXPORT float __stdcall potential_energy(double theta);
 
     //! A global function.
     /*!
@@ -110,20 +126,6 @@ extern "C" {
 		経過時間tを初期値（= 0.0）に戻す
 	*/
 	DLLEXPORT void __stdcall timereset();
-
-	//! A global function.
-	/*!
-		全エネルギーを求める
-		\return 全エネルギー
-	*/
-	DLLEXPORT float __stdcall total_energy();
-
-	//! A global function.
-	/*!
-		@fumofumbunさんの近似関数によって、全エネルギーを求める
-		\return @fumofumbunさんの近似関数によって求めた全エネルギー
-	*/
-	DLLEXPORT float __stdcall total_energy_fumofumobun_approx();
 }
 
 #endif  // _SOLVEEOMMAIN_H_

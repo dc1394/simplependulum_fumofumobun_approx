@@ -119,20 +119,36 @@ namespace SimplePendulum
             
             // ラベルに近似関数による角度θの値を表示する
             GUI.Label(
-                new Rect(20.0f, 60.0f, 400.0f, 20.0f),
+                new Rect(20.0f, 60.0f, 450.0f, 20.0f),
                 String.Format("@fumofumobunさんの近似関数による角度θ = {0:F3}°", this.GetThetaDeg()),
                 guiStyle);
 
             // ラベルに近似関数による速度vの値を表示する
             GUI.Label(
-                new Rect(20.0f, 100.0f, 400.0f, 20.0f),
+                new Rect(20.0f, 100.0f, 450.0f, 20.0f),
                 String.Format("@fumofumobunさんの近似関数による速度v = {0:F3}(m/s)", Solveeomcs.SolveEoMcs.GetV_Fumofumobun_Approx()),
                 guiStyle);
 
-            // ラベルに数値的に求めた全エネルギーの値を表示する
+            var kinetic = Solveeomcs.SolveEoMcs.Kinetic_Energy(Solveeomcs.SolveEoMcs.GetV_Fumofumobun_Approx());
+
+            // ラベルに近似関数による運動エネルギーの値を表示する
             GUI.Label(
-                new Rect(20.0f, 140.0f, 400.0f, 20.0f),
-                String.Format("@fumofumobunさんの近似関数による全エネルギー = {0:F3}(J)", Solveeomcs.SolveEoMcs.Total_Energy_Fumofumobun_Approx()),
+                new Rect(20.0f, 140.0f, 450.0f, 20.0f),
+                String.Format("@fumofumobunさんの近似関数による運動エネルギー = {0:F3}(J)", kinetic),
+                guiStyle);
+
+            var potential = Solveeomcs.SolveEoMcs.Potential_Energy(Solveeomcs.SolveEoMcs.GetTheta_Fumofumobun_Approx());
+
+            // ラベルに近似関数によるポテンシャルエネルギーの値を表示する
+            GUI.Label(
+                new Rect(20.0f, 180.0f, 450.0f, 20.0f),
+                String.Format("@fumofumobunさんの近似関数によるポテンシャルエネルギー = {0:F3}(J)", potential),
+                guiStyle);
+
+            // ラベルに近似関数による全エネルギーの値を表示する
+            GUI.Label(
+                new Rect(20.0f, 220.0f, 450.0f, 20.0f),
+                String.Format("@fumofumobunさんの近似関数による全エネルギー = {0:F3}(J)", kinetic + potential),
                 guiStyle);
 
 

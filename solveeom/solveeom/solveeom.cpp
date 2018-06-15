@@ -53,6 +53,11 @@ namespace solveeom {
 		return l_ * (term1 + term2);
     }
 
+	float SolveEoM::kinetic_energy(double v) const
+	{
+		return static_cast<float>(0.5 * m_ * sqr(v));
+	}
+
     float SolveEoM::operator()(float dt)
     {
         boost::numeric::odeint::integrate_adaptive(
@@ -83,6 +88,11 @@ namespace solveeom {
             });
     }
 
+	float SolveEoM::potential_energy(double theta) const
+	{
+		return static_cast<float>(m_ * SolveEoM::g * l_ * (1.0 - std::cos(theta)));
+	}
+
 	void SolveEoM::timereset()
     {
 		t_ = 0.0;
@@ -110,25 +120,6 @@ namespace solveeom {
         };
 
         return eom;
-    }
-	
-	float SolveEoM::total_energy() const
-	{
-		auto const kinetic = 0.5 * m_ * sqr(l_ * x_[1]);
-		auto const potential = m_ * SolveEoM::g * l_ * (1.0 - std::cos(x_[0]));
-
-		return static_cast<float>(kinetic + potential);
-	}
-
-	float SolveEoM::total_energy_fumofumobun_approx() const
-    {
-		auto const v = getv_fumofumobun_approx();
-		auto const kinetic = 0.5 * m_ * sqr(v);
-
-		auto const theta = gettheta_fumofumobun_approx();
-		auto const potential = m_ * SolveEoM::g * l_ * (1.0 - std::cos(theta));
-
-		return static_cast<float>(kinetic + potential);
     }
 
     // #endregion privateメンバ関数

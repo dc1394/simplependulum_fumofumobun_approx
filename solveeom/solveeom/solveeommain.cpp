@@ -31,11 +31,21 @@ extern "C" {
     {
         pse.emplace(l, r, theta0);
     }
-    
+
+	float __stdcall kinetic_energy(double v)
+	{
+		return pse->kinetic_energy(v);
+	}
+
     float __stdcall nextstep(float dt)
     {
         return (*pse)(dt);
     }
+
+	float __stdcall potential_energy(double theta)
+	{
+		return pse->potential_energy(theta);
+	}
 
     void __stdcall saveresult(double dt, std::string const & filename, double t)
     {
@@ -66,14 +76,4 @@ extern "C" {
 	{
 		pse->timereset();
 	}
-
-	float __stdcall total_energy()
-	{
-		return pse->total_energy();
-	}
-
-	float __stdcall total_energy_fumofumobun_approx()
-    {
-		return pse->total_energy_fumofumobun_approx();
-    }
 }

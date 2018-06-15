@@ -87,6 +87,14 @@ namespace solveeom {
 		*/
 		float getv_fumofumobun_approx() const;
 
+		//! A public member function.
+		/*!
+			運動エネルギーを求める
+			\param v 速度
+			\return 運動エネルギー
+		*/
+		float kinetic_energy(double v) const;
+
         //! A public member function.
         /*!
             運動方程式を、指定された時間まで積分する
@@ -94,6 +102,14 @@ namespace solveeom {
             \return 積分結果
         */
         float operator()(float dt);
+
+		//! A public member function.
+		/*!
+			ポテンシャルエネルギーを求める
+			\param theta 角度
+			\return ポテンシャルエネルギー
+		*/
+		float potential_energy(double theta) const;
 
         //! A public member function.
         /*!
@@ -109,20 +125,6 @@ namespace solveeom {
 			経過時間tを初期値（= 0.0）に戻す
 		*/
 		void timereset();
-
-		//! A public member function.
-		/*!
-			全エネルギーを求める
-			\return 全エネルギー
-		*/
-		float total_energy() const;
-
-		//! A public member function.
-		/*!
-			@fumofumbunさんの近似関数によって、全エネルギーを求める
-			\return @fumofumbunさんの近似関数によって求めた全エネルギー
-		*/
-		float total_energy_fumofumobun_approx() const;
 
         // #endregion publicメンバ関数
 

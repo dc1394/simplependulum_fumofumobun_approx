@@ -32,6 +32,11 @@ namespace SimplePendulum
         private static readonly Vector3 GravityDirection = Physics.gravity.normalized;
 
         /// <summary>
+        /// 角度θ(deg)
+        /// </summary>
+        private static Single thetadeg;
+
+        /// <summary>
         /// ボタンのテキスト
         /// </summary>
         private String buttontext = SimplePendulum.StartText;
@@ -85,11 +90,6 @@ namespace SimplePendulum
         /// 経過時間t(sec)
         /// </summary>
         private Single time;
-
-        /// <summary>
-        /// 角度θ(deg)
-        /// </summary>
-        private static Single thetadeg;
 
         #endregion フィールド
 
@@ -161,34 +161,48 @@ namespace SimplePendulum
         {
             // ラベルに経過時間tの値を表示する
             GUI.Label(
-                new Rect(20.0f, 20.0f, 400.0f, 20.0f),
+                new Rect(20.0f, 20.0f, 450.0f, 20.0f),
                 String.Format("経過時間{0:F3}（秒）", this.time));
 
             // ラベルに数値的に求めた角度θの値を表示する
             GUI.Label(
-                new Rect(20.0f, 40.0f, 400.0f, 20.0f),
+                new Rect(20.0f, 40.0f, 450.0f, 20.0f),
                 String.Format("数値的に求めた角度θ =                                 {0:F3}°", this.GetThetaDeg()));
 
             // ラベルに数値的に求めた速度vの値を表示する
             GUI.Label(
-                new Rect(20.0f, 80.0f, 400.0f, 20.0f),
+                new Rect(20.0f, 80.0f, 450.0f, 20.0f),
                 String.Format("数値的に求めた速度v =                                  {0:F3}(m/s)", Solveeomcs.SolveEoMcs.GetV()));
 
-            // ラベルに数値的に求めた全エネルギーの値を表示する
+            var kinetic = Solveeomcs.SolveEoMcs.Kinetic_Energy(Solveeomcs.SolveEoMcs.GetV());
+
+            // ラベルに数値的に求めた運動エネルギーの値を表示する
             GUI.Label(
-                new Rect(20.0f, 120.0f, 400.0f, 20.0f),
-                String.Format("数値的に求めた全エネルギー =                                 {0:F3}(J)", Solveeomcs.SolveEoMcs.Total_Energy()));
+                new Rect(20.0f, 120.0f, 450.0f, 20.0f),
+                String.Format("数値的に求めた運動エネルギー =                                 {0:F3}(J)", kinetic));
+
+            var potential = Solveeomcs.SolveEoMcs.Potential_Energy(Solveeomcs.SolveEoMcs.GetTheta());
+
+            // ラベルに数値的に求めたポテンシャルエネルギーの値を表示する
+            GUI.Label(
+                new Rect(20.0f, 160.0f, 450.0f, 20.0f),
+                String.Format("数値的に求めたポテンシャルエネルギー =                                 {0:F3}(J)", potential));
+
+            // ラベルに数値的に求めたポテンシャルエネルギーの値を表示する
+            GUI.Label(
+                new Rect(20.0f, 200.0f, 450.0f, 20.0f),
+                String.Format("数値的に求めた全エネルギー =                                 {0:F3}(J)", kinetic + potential));
 
             var ypos2 = 20.0f;
 
             // 「角度θ」と表示する
-            GUI.Label(new Rect(400.0f, ypos2, 100.0f, 20.0f), "角度θ");
+            GUI.Label(new Rect(450.0f, ypos2, 100.0f, 20.0f), "角度θ");
 
             ypos2 += 20.0f;
 
             // 角度を変更するスライダーを表示する
             var thetadegbefore = SimplePendulum.thetadeg;
-            SimplePendulum.thetadeg = GUI.HorizontalSlider(new Rect(400.0f, ypos2, 100.0f, 20.0f), SimplePendulum.thetadeg, -180.0f, 180.0f);
+            SimplePendulum.thetadeg = GUI.HorizontalSlider(new Rect(450.0f, ypos2, 100.0f, 20.0f), SimplePendulum.thetadeg, -180.0f, 180.0f);
             if (Mathf.Abs(SimplePendulum.thetadeg - thetadegbefore) > Mathf.Epsilon)
             {
                 SimplePendulum.IsAngelChange = true;
@@ -204,7 +218,7 @@ namespace SimplePendulum
             var ypos3 = 20.0f;
 
             // 「Start」か「Stop」ボタンを表示する
-            if (GUI.Button(new Rect(520.0f, ypos3, 110.0f, 20.0f), this.buttontext))
+            if (GUI.Button(new Rect(580.0f, ypos3, 110.0f, 20.0f), this.buttontext))
             {
                 if (SimplePendulum.Exec)
                 {
@@ -221,7 +235,7 @@ namespace SimplePendulum
             ypos3 += 30.0f;
 
             // 「Reset」ボタンを表示する
-            if (GUI.Button(new Rect(520.0f, ypos3, 110.0f, 20.0f), "Reset"))
+            if (GUI.Button(new Rect(580.0f, ypos3, 110.0f, 20.0f), "Reset"))
             {
                 SimplePendulum.IsReset = true;
 
@@ -238,7 +252,7 @@ namespace SimplePendulum
             ypos3 += 30.0f;
 
             // 「Exit」ボタンを表示する
-            if (GUI.Button(new Rect(520.0f, ypos3, 110.0f, 20.0f), "Exit"))
+            if (GUI.Button(new Rect(580.0f, ypos3, 110.0f, 20.0f), "Exit"))
             {
                 Application.Quit();
             }

@@ -54,12 +54,28 @@ namespace Solveeomcs
         public static extern void Init(Single l, Single r, Single theta0);
 
         /// <summary>
+        /// 運動エネルギーを求める
+        /// </summary>
+        /// <param name="v">速度</param>
+        /// <returns>運動エネルギー</returns>
+        [DllImport("solveeom", EntryPoint = "kinetic_energy")]
+        public static extern float Kinetic_Energy(double v);
+
+        /// <summary>
         /// 次のステップを計算する
         /// </summary>
         /// <param name="dt">前ステップからの経過時間</param>
         /// <returns>新しい角度θの値</returns>
         [DllImport("solveeom", EntryPoint = "nextstep")]
         public static extern Single NextStep(Single dt);
+
+        /// <summary>
+        /// ポテンシャルエネルギーを求める
+        /// </summary>
+        /// <param name="theta">角度</param>
+        /// <returns>ポテンシャルエネルギー</returns>
+        [DllImport("solveeom", EntryPoint = "potential_energy")]
+        public static extern Single Potential_Energy(double theta);
 
         /// <summary>
         /// 角度θの値に対するsetter
@@ -94,20 +110,6 @@ namespace Solveeomcs
         /// </summary>
         [DllImport("solveeom", EntryPoint = "timereset")]
         public static extern void TimeReset();
-
-        /// <summary>
-        /// 全エネルギーを求める
-        /// </summary>
-        /// <returns>全エネルギー</returns>
-        [DllImport("solveeom", EntryPoint = "total_energy")]
-        public static extern Single Total_Energy();
-
-        /// <summary>
-        /// @fumofumbunさんの近似関数によって、全エネルギーを求める
-        /// </summary>
-        /// <returns>@fumofumbunさんの近似関数によって求めた全エネルギー</returns>
-        [DllImport("solveeom", EntryPoint = "total_energy_fumofumobun_approx")]
-        public static extern Single Total_Energy_Fumofumobun_Approx();
 
         #endregion メソッド
     }
