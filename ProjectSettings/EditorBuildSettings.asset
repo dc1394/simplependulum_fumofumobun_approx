@@ -6,6 +6,6 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/simplependulum_fumofumo.unity
-    guid: 7dac9b1c09a4d704ebb9f3fc2ff2eb30
+    path: Assets/simplependulum_fumofumobun_approx.unity
+    guid: 696744998fe32ee4093be56d9e38522a
   m_configObjects: {}

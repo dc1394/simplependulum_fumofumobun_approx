@@ -10,47 +10,47 @@
 #include <boost/assert.hpp>                     // for BOOST_ASSERT
 #include <boost/format.hpp>                     // for boost::format
 #include <boost/math/constants/constants.hpp>   // for boost::math::constants::pi
+#include "solveeommain.h"
 
 namespace solveeom {
     // #region コンストラクタ・デストラクタ
 
-    SolveEoM::SolveEoM(float l, float r, bool resistance, bool simpleharmonic, float theta0) :
-        Resistance(nullptr, [this](auto resistance) { return resistance_ = resistance; }),
-		Simpleharmonic(nullptr, [this](auto simpleharmonic) { return simpleharmonic_ = simpleharmonic; }),
+    SolveEoM::SolveEoM(float l, float r, float theta0) :
         Theta([this] { return static_cast<float>(x_[0]); }, [this](auto theta) { return x_[0] = theta; }),
-		V([this] { return static_cast<float>(x_[1]); }, [this](auto v) { return x_[1] = v; }),
+		Theta0(nullptr, [this](auto theta0) { return theta0_ = theta0; }),
+		Time([this] { return static_cast<float>(t_); }, [this](auto t) { return t_ = t; }),
+		V([this] { return static_cast<float>(l_ * x_[1]); }, [this](auto v) { return x_[1] = v / l_; }),
         l_(l),
+		omega0_2_(g / l_),
         r_(r),
         m_(4.0 / 3.0 * boost::math::constants::pi<double>() * r * r * r * SolveEoM::ALUMINIUMRHO),
         myu_(SolveEoM::AIRMYU),     // 空気の粘度
-        resistance_(resistance),    // 空気抵抗
-        rho_(SolveEoM::AIRRHO),     // 空気の密度
-		simpleharmonic_(simpleharmonic),
-        stepper_(SolveEoM::EPS, SolveEoM::EPS),
+		gamma_(3.0 * boost::math::constants::pi<double>() * r_ * myu_ / m_),
+		stepper_(SolveEoM::EPS, SolveEoM::EPS),
 		t_(0.0),
 		theta0_(theta0),
 		x_({ theta0, 0.0 })
     {
-        nyu_ = myu_ / rho_;
     }
 
     // #endregion コンストラクタ・デストラクタ
 
     // #region publicメンバ関数
 
-	float SolveEoM::gettheta_fumofumobun_approx(float dt)
+	float SolveEoM::gettheta_fumofumobun_approx() const
 	{
-		static auto const gamma = static_cast<float>(3.0 * boost::math::constants::pi<double>() * r_ * myu_ / m_);
-		static auto const omega0_2 = static_cast<float>(g / l_);
-
-		t_ += dt;
-
-		return static_cast<float>(theta0_ * std::exp(-gamma * t_) * std::cos(std::sqrt((omega0_2 - gamma * gamma) * (3.0 + std::cos(theta0_ * std::exp(-gamma * t_)))) / 2.0 * t_));
+		return static_cast<float>(theta0_ * std::exp(-gamma_ * t_) * std::cos(std::sqrt((omega0_2_ - gamma_ * gamma_) * (3.0 + std::cos(theta0_ * std::exp(-gamma_ * t_)))) / 2.0 * t_));
 	}
 
-    float SolveEoM::kinetic_energy() const
+	float SolveEoM::getv_fumofumobun_approx() const
     {
-        return static_cast<float>(0.5 * m_ * sqr(l_ * x_[1]));
+		auto const term1 = -gamma_ * gettheta_fumofumobun_approx();
+
+		auto const alpha = 0.5 * std::sqrt((omega0_2_ - gamma_ * gamma_) * (3.0 + std::cos(theta0_ * std::exp(-gamma_ * t_))));
+
+		auto const term2 = -alpha * theta0_* std::exp(-gamma_ * t_) * std::sin(alpha * t_) * (0.5 * theta0_ * gamma_ * std::exp(-gamma_ * t_) * std::sin(theta0_ * std::exp(-gamma_ * t_)) / (3.0 + std::cos(theta0_ * std::exp(-gamma_ * t_))) * t_ + 1.0);
+
+		return l_ * (term1 + term2);
     }
 
     float SolveEoM::operator()(float dt)
@@ -79,34 +79,8 @@ namespace solveeom {
             dt,
             [dt, &result, this](auto const & x, auto const t)
             {
-				result << boost::format("%.3f, %.15f, %.15f\n") % t % x[0] % gettheta_fumofumobun_approx(dt);
+				result << boost::format("%.3f, %.15f, %.15f\n") % t % x[0] % gettheta_fumofumobun_approx();
             });
-    }
-
-    float SolveEoM::potential_energy() const
-    {
-        return static_cast<float>(m_ * SolveEoM::g * l_ * (1.0f - std::cos(x_[0])));
-    }
-	
-    void SolveEoM::setfluid(std::int32_t fluid)
-    {
-        switch (static_cast<SolveEoM::Fluid_type>(fluid)) {
-        case SolveEoM::Fluid_type::AIR:
-            myu_ = SolveEoM::AIRMYU;
-            rho_ = SolveEoM::AIRRHO;
-            break;
-
-        case SolveEoM::Fluid_type::WATER:
-            myu_ = SolveEoM::WATERMYU;
-            rho_ = SolveEoM::WATERRHO;
-            break;
-
-        default:
-            BOOST_ASSERT(!"ここに来てはいけない!");
-            break;
-        }
-
-        nyu_ = myu_ / rho_;
     }
 
 	void SolveEoM::timereset()
@@ -138,13 +112,24 @@ namespace solveeom {
         return eom;
     }
 	
-	double SolveEoM::total_energy() const
+	float SolveEoM::total_energy() const
 	{
 		auto const kinetic = 0.5 * m_ * sqr(l_ * x_[1]);
 		auto const potential = m_ * SolveEoM::g * l_ * (1.0 - std::cos(x_[0]));
 
-		return kinetic + potential;
+		return static_cast<float>(kinetic + potential);
 	}
+
+	float SolveEoM::total_energy_fumofumobun_approx() const
+    {
+		auto const v = getv_fumofumobun_approx();
+		auto const kinetic = 0.5 * m_ * sqr(v);
+
+		auto const theta = gettheta_fumofumobun_approx();
+		auto const potential = m_ * SolveEoM::g * l_ * (1.0 - std::cos(theta));
+
+		return static_cast<float>(kinetic + potential);
+    }
 
     // #endregion privateメンバ関数
 }

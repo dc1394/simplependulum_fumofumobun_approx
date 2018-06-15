@@ -59,11 +59,9 @@ namespace solveeom {
             唯一のコンストラクタ
             \param l ロープの長さ
             \param r 球の半径
-            \param resistance 空気抵抗の有無
-            \param simpleharmonic 単振動にするかどうか
             \param theta0 θの初期値
         */
-        SolveEoM(float l, float r, bool resistance, bool simpleharmonic, float theta0);
+        SolveEoM(float l, float r, float theta0);
 
         //! A destructor.
         /*!
@@ -78,17 +76,16 @@ namespace solveeom {
 		//! A public member function.
 		/*!
 			@fumofumobunさんの近似関数によって、角度θを求める
-			\param dt 前ステップからの経過時間
 			\return @fumofumobunさんの近似関数によって求めた角度θ
 		*/
-		float gettheta_fumofumobun_approx(float dt);
+		float gettheta_fumofumobun_approx() const;
 
-        //! A public member function.
-        /*!
-            運動エネルギーを求める
-            \return 運動エネルギー
-        */
-        float kinetic_energy() const;
+		//! A public member function.
+		/*!
+			@fumofumobunさんの近似関数によって、速度vを求める
+			\return @fumofumobunさんの近似関数によって求めた速度v
+		*/
+		float getv_fumofumobun_approx() const;
 
         //! A public member function.
         /*!
@@ -107,25 +104,25 @@ namespace solveeom {
         */
         void operator()(double dt, std::string const & filename, double t);
 
-        //! A public member function.
-        /*!
-            ポテンシャルエネルギーを求める
-            \return ポテンシャルエネルギー
-        */
-        float potential_energy() const;
-				
-        //! A public member function.
-        /*!
-            流体の種類を切り替える
-            \param fluid 流体の種類
-        */
-        void setfluid(std::int32_t fluid);
-
 		//! A public member function.
 		/*!
 			経過時間tを初期値（= 0.0）に戻す
 		*/
 		void timereset();
+
+		//! A public member function.
+		/*!
+			全エネルギーを求める
+			\return 全エネルギー
+		*/
+		float total_energy() const;
+
+		//! A public member function.
+		/*!
+			@fumofumbunさんの近似関数によって、全エネルギーを求める
+			\return @fumofumbunさんの近似関数によって求めた全エネルギー
+		*/
+		float total_energy_fumofumobun_approx() const;
 
         // #endregion publicメンバ関数
 
@@ -138,13 +135,6 @@ namespace solveeom {
             \return 運動方程式のstd::function
         */
         std::function<void(state_type const &, state_type &, double const)> getEoM() const;
-
-		//! A public member function.
-		/*!
-			全エネルギーを求める
-			\return ポテンシャルエネルギー
-		*/
-		double total_energy() const;
 		
         // #endregion privateメンバ関数
 
@@ -153,21 +143,21 @@ namespace solveeom {
     public:
         //! A property.
         /*!
-            空気抵抗の有無へのプロパティ
-        */
-        Property<bool> Resistance;
-
-		//! A property.
-		/*!
-			単振動にするかどうかのプロパティ
-		*/
-		Property<bool> Simpleharmonic;
-
-        //! A property.
-        /*!
             角度θへのプロパティ
         */
         Property<float> Theta;
+
+		//! A property.
+		/*!
+			角度θ₀へのプロパティ
+		*/
+		Property<float> Theta0;
+
+		//! A property.
+		/*!
+			経過時間tへのプロパティ
+		*/
+		Property<float> Time;
 
         //! A property.
         /*!
@@ -218,12 +208,6 @@ namespace solveeom {
 
         //! A private static member variable (constant expression).
         /*!
-            レイノルズ数の閾値
-        */
-        static auto constexpr THRESHOLD = 0.1;
-
-        //! A private static member variable (constant expression).
-        /*!
             水の粘度
         */
         static auto constexpr WATERMYU = 1.004E-3;
@@ -239,6 +223,12 @@ namespace solveeom {
             棒の端から球までの長さ
         */
         double l_;
+
+		//! A private member variable.
+		/*!
+			振動の係数
+		*/
+		double const omega0_2_;
 
         //! A private member variable.
         /*!
@@ -257,32 +247,14 @@ namespace solveeom {
             粘度
         */
         double myu_;
-        
-        //! A private member variable.
-        /*!
-            動粘度
-        */
-        double nyu_;
-        
-        //! A private member variable.
-        /*!
-            流体の抵抗
-        */
-        bool resistance_;
 
-        //! A private member variable.
-        /*!
-            流体の密度
-        */
-        double rho_;
-		
 		//! A private member variable.
 		/*!
-			単振動にするかどうか
+			粘性抵抗の係数
 		*/
-		bool simpleharmonic_ = false;
-
-        //! A private member variable.
+		double const gamma_;
+        
+		//! A private member variable.
         /*!
             Bulirsch-Stoer法のBoost.ODEIntオブジェクト
         */
@@ -298,7 +270,7 @@ namespace solveeom {
 		/*!
 			角度θの初期値θ₀
 		*/
-		double const theta0_;
+		double theta0_;
 
         //! A private member variable.
         /*!

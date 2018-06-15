@@ -12,9 +12,14 @@ extern "C" {
         return pse->Theta();
     }
 
-	float __stdcall gettheta_fumofumobun_approx(float dt)
+	float __stdcall gettheta_fumofumobun_approx()
 	{
-		return pse->gettheta_fumofumobun_approx(dt);
+		return pse->gettheta_fumofumobun_approx();
+	}
+
+	float __stdcall getv_fumofumobun_approx()
+	{
+		return pse->getv_fumofumobun_approx();
 	}
 
     float __stdcall getv()
@@ -22,14 +27,9 @@ extern "C" {
         return pse->V();
     }
 
-    void __stdcall init(float l, float r, bool resistance, bool simpleharmonic, float theta0)
+    void __stdcall init(float l, float r, float theta0)
     {
-        pse.emplace(l, r, resistance, simpleharmonic, theta0);
-    }
-    
-    float __stdcall kinetic_energy()
-    {
-        return pse->kinetic_energy();
+        pse.emplace(l, r, theta0);
     }
     
     float __stdcall nextstep(float dt)
@@ -37,34 +37,24 @@ extern "C" {
         return (*pse)(dt);
     }
 
-    float __stdcall potential_energy()
-    {
-        return pse->potential_energy();
-    }
-
     void __stdcall saveresult(double dt, std::string const & filename, double t)
     {
         (*pse)(dt, filename, t);
     }
-
-    void __stdcall setfluid(std::int32_t fluid)
-    {
-        pse->setfluid(fluid);
-    }
-
-    void __stdcall setresistance(bool resistance)
-    {
-        pse->Resistance(resistance);
-    }
-
-    void __stdcall setsimpleharmonic(bool simpleharmonic)
-    {
-        pse->Simpleharmonic(simpleharmonic);
-    }
-
+	    
     void __stdcall settheta(float theta)
     {
-        pse->Theta(theta);
+        pse->Theta = theta;
+    }
+
+	void __stdcall settheta0(float theta0)
+	{
+		pse->Theta0 = theta0;
+	}
+
+	void __stdcall settime(float dt)
+    {
+		pse->Time = pse->Time() + dt;
     }
 
     void __stdcall setv(float v)
@@ -76,4 +66,14 @@ extern "C" {
 	{
 		pse->timereset();
 	}
+
+	float __stdcall total_energy()
+	{
+		return pse->total_energy();
+	}
+
+	float __stdcall total_energy_fumofumobun_approx()
+    {
+		return pse->total_energy_fumofumobun_approx();
+    }
 }

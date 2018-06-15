@@ -33,10 +33,16 @@ extern "C" {
 	//! A global function.
 	/*!
 		@fumofumobunさんの近似関数によって、角度θを求める
-		\param dt 前ステップからの経過時間
 		\return @fumofumobunさんの近似関数によって求めた角度θ
 	*/
-	DLLEXPORT float __stdcall gettheta_fumofumobun_approx(float dt);
+	DLLEXPORT float __stdcall gettheta_fumofumobun_approx();
+
+	//! A global function.
+	/*!
+		@fumofumobunさんの近似関数によって、速度vを求める
+		\return @fumofumobunさんの近似関数によって求めた速度v
+	*/
+	DLLEXPORT float __stdcall getv_fumofumobun_approx();
 
     //! A global function.
     /*!
@@ -50,18 +56,9 @@ extern "C" {
         seオブジェクトを初期化する
         \param l ロープの長さ
         \param r 球の半径
-        \param resistance 空気抵抗の有無
-        \param simpleharmonic 単振動にするかどうか
         \param theta0 θの初期値
     */
-    DLLEXPORT void __stdcall init(float l, float r, bool resistance, bool simpleharmonic, float theta0);
-
-    //! A global function.
-    /*!
-        運動エネルギーを求める
-        \return 運動エネルギー
-    */
-    DLLEXPORT float __stdcall kinetic_energy();
+    DLLEXPORT void __stdcall init(float l, float r, float theta0);
 
     //! A global function.
     /*!
@@ -73,13 +70,6 @@ extern "C" {
 
     //! A global function.
     /*!
-        ポテンシャルエネルギーを求める
-        \return ポテンシャルエネルギー
-    */
-    DLLEXPORT float __stdcall potential_energy();
-
-    //! A global function.
-    /*!
         運動方程式を、指定された時間まで積分し、その結果を時間間隔Δtごとにファイルに保存する
         \param dt 時間刻み
         \param filename 保存ファイル名
@@ -87,46 +77,53 @@ extern "C" {
     */
     DLLEXPORT void __stdcall saveresult(double dt, std::string const & filename, double t);
 
-    //! A global function.
-    /*!
-        流体の種類を切り替える
-        \param fluid 流体の種類
-    */
-    DLLEXPORT void __stdcall setfluid(std::int32_t fluid);
-
-    //! A global function.
-    /*!
-        空気抵抗の有無に対するsetter
-        \param resistance 空気抵抗の有無
-    */
-    DLLEXPORT void __stdcall setresistance(bool resistance);
-
-    //! A global function.
-    /*!
-        単振動にするかどうかのsetter
-        \param simpleharmonic 空気抵抗の有無
-    */
-    DLLEXPORT void __stdcall setsimpleharmonic(bool simpleharmonic);
-
-    //! A global function.
+	//! A global function.
     /*!
         角度θの値に対するsetter
         \param theta 設定する角度θ
     */
     DLLEXPORT void __stdcall settheta(float theta);
 
-    //! A global function.
-    /*!
-        速度vの値に対するsetter
-        \return 設定する速度v
-    */
-    DLLEXPORT void __stdcall setv(float v);
+	//! A global function.
+	/*!
+		初期角度θ₀の値に対するsetter
+		\param theta0 設定する初期角度θ₀
+	*/
+	DLLEXPORT void __stdcall settheta0(float theta0);
+
+	//! A global function.
+	/*!
+		経過時間tに対するsetter
+		\param dt 前ステップからの経過時間
+	*/
+	DLLEXPORT void __stdcall settime(float dt);
+	
+	//! A global function.
+	/*!
+		速度vの値に対するsetter
+		\param v 設定する速度v
+	*/
+	DLLEXPORT void __stdcall setv(float v);
 
 	//! A global function.
 	/*!
 		経過時間tを初期値（= 0.0）に戻す
 	*/
 	DLLEXPORT void __stdcall timereset();
+
+	//! A global function.
+	/*!
+		全エネルギーを求める
+		\return 全エネルギー
+	*/
+	DLLEXPORT float __stdcall total_energy();
+
+	//! A global function.
+	/*!
+		@fumofumbunさんの近似関数によって、全エネルギーを求める
+		\return @fumofumbunさんの近似関数によって求めた全エネルギー
+	*/
+	DLLEXPORT float __stdcall total_energy_fumofumobun_approx();
 }
 
 #endif  // _SOLVEEOMMAIN_H_

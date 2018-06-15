@@ -117,20 +117,49 @@ namespace SimplePendulum
                 normal = styleState
             };
             
-            // ラベルに角度θの値を表示する
+            // ラベルに近似関数による角度θの値を表示する
             GUI.Label(
-                new Rect(20.0f, 60.0f, 350.0f, 20.0f),
+                new Rect(20.0f, 60.0f, 400.0f, 20.0f),
                 String.Format("@fumofumobunさんの近似関数による角度θ = {0:F3}°", this.GetThetaDeg()),
                 guiStyle);
+
+            // ラベルに近似関数による速度vの値を表示する
+            GUI.Label(
+                new Rect(20.0f, 100.0f, 400.0f, 20.0f),
+                String.Format("@fumofumobunさんの近似関数による速度v = {0:F3}(m/s)", Solveeomcs.SolveEoMcs.GetV_Fumofumobun_Approx()),
+                guiStyle);
+
+            // ラベルに数値的に求めた全エネルギーの値を表示する
+            GUI.Label(
+                new Rect(20.0f, 140.0f, 400.0f, 20.0f),
+                String.Format("@fumofumobunさんの近似関数による全エネルギー = {0:F3}(J)", Solveeomcs.SolveEoMcs.Total_Energy_Fumofumobun_Approx()),
+                guiStyle);
+
+
+            // 角度θが変更された際の処理
+            if (SimplePendulum.IsAngelChange)
+            {
+                var theta = Mathf.Deg2Rad * SimplePendulum.Thetadeg;
+
+                Solveeomcs.SolveEoMcs.TimeReset();
+                Solveeomcs.SolveEoMcs.SetTheta0(theta);
+                
+                this.SphereRotate(theta);
+                this.RopeUpdate();
+                
+                SimplePendulum.IsAngelChange = false;
+            }
 
             // 「Reset」ボタンの処理
             if (SimplePendulum.IsReset)
             {
-                SimplePendulum.IsReset = false;
+                Solveeomcs.SolveEoMcs.SetTheta0(this.firsttheta);
                 Solveeomcs.SolveEoMcs.TimeReset();
 
                 this.SphereRotate(this.firsttheta);
                 this.RopeUpdate();
+
+                SimplePendulum.IsReset = false;
             }
         }
 
@@ -214,9 +243,7 @@ namespace SimplePendulum
         {
             this.ropeLength = Vector3.Distance(this.origin, this.sphere.transform.position);
 
-            var thetadeg = this.GetThetaDeg();
-
-            this.firsttheta = Mathf.Deg2Rad * thetadeg;
+            this.firsttheta = Mathf.Deg2Rad * this.GetThetaDeg();
         }
 
         /// <summary>
@@ -225,8 +252,11 @@ namespace SimplePendulum
         /// <param name="frameTime">経過時間</param>
         private void SphereUpdate(float frameTime)
         {
+            // 経過時間を更新
+            Solveeomcs.SolveEoMcs.SetTime(frameTime);
+
             // @fumofumobunさんの近似関数から角度θを求める
-            var theta = Solveeomcs.SolveEoMcs.GetTheta_Fumofumobun_Approx(frameTime);
+            var theta = Solveeomcs.SolveEoMcs.GetTheta_Fumofumobun_Approx();
 
             // 球の角度を更新
             this.SphereRotate(theta);

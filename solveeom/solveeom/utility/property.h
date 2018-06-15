@@ -1,7 +1,7 @@
 ﻿/*! \file property.h
     \brief C++でプロパティを実現するクラスの宣言と実装
 
-    Copyright ©  2016 @dc1394 All Rights Reserved.
+    Copyright © 2016 @dc1394 All Rights Reserved.
     (but this is originally adapted by επιστημη for list-07 from http://codezine.jp/article/detail/7571 )
     This software is released under the BSD 2-Clause License.
 */
@@ -107,6 +107,7 @@ namespace utility {
 
         // #region 禁止されたコンストラクタ・メンバ関数
 
+    public:
         //! A private constructor (deleted).
         /*!
         デフォルトコンストラクタ（禁止）
@@ -122,10 +123,10 @@ namespace utility {
         //! A private member function (deleted).
         /*!
             operator=()の宣言（禁止）
-            \param コピー元のオブジェクト（未使用）
+            \param dummy コピー元のオブジェクト（未使用）
             \return コピー元のオブジェクト
         */
-        Property & operator=(Property const &) = delete;
+        Property & operator=(Property const & dummy) = delete;
 
         // #endregion 禁止されたコンストラクタ・メンバ関数
     };

@@ -40,12 +40,12 @@ namespace SimplePendulum
         /// ロープの重心のスケール
         /// </summary>
         [SerializeField]
-        private float centerOfGarvityForRopeScale = 0.4f;
+        private Single centerOfGarvityForRopeScale = 0.4f;
                 
         /// <summary>
         /// θの初期値
         /// </summary>
-        private float firsttheta;
+        private Single firsttheta;
 
         /// <summary>
         /// 原点の座標
@@ -56,13 +56,13 @@ namespace SimplePendulum
         /// <summary>
         /// 前回のフレームで取得した時間
         /// </summary>
-        private float previousTime = 0.0f;
+        private Single previousTime = 0.0f;
 
         /// <summary>
         /// 球の半径
         /// </summary>
         [SerializeField]
-        private float radius = 0.05f;
+        private Single radius = 0.05f;
 
         /// <summary>
         /// ロープオブジェクト
@@ -73,7 +73,7 @@ namespace SimplePendulum
         /// <summary>
         /// ロープの長さ
         /// </summary>
-        private float ropeLength;
+        private Single ropeLength;
 
         /// <summary>
         /// 球オブジェクト
@@ -84,12 +84,12 @@ namespace SimplePendulum
         /// <summary>
         /// 経過時間t(sec)
         /// </summary>
-        private float time;
+        private Single time;
 
         /// <summary>
         /// 角度θ(deg)
         /// </summary>
-        private float thetadeg;
+        private static Single thetadeg;
 
         #endregion フィールド
 
@@ -104,7 +104,23 @@ namespace SimplePendulum
         /// 「Reset」ボタンが押されたかどうかへのプロパティ
         /// </summary>
         internal static Boolean IsReset { get; set; }
- 
+
+        /// <summary>
+        /// 角度θが変更されたかどうかへのプロパティ
+        /// </summary>
+        internal static Boolean IsAngelChange { get; set; }
+
+        /// <summary>
+        /// 角度θ(deg)へのプロパティ
+        /// </summary>
+        internal static Single Thetadeg
+        {
+            get
+            {
+                return SimplePendulum.thetadeg;
+            }
+        }
+
         #endregion プロパティ
 
         #region メソッド
@@ -113,7 +129,7 @@ namespace SimplePendulum
         /// 原点から測定した、球の座標と重力ベクトルの成す角度を与える関数
         /// </summary>
         /// <returns>球の座標と重力ベクトルの成す角度</returns>
-        private float GetSphereAndGravityAngle()
+        private Single GetSphereAndGravityAngle()
         {
             return Vector3.Angle(this.sphere.transform.position - this.origin, SimplePendulum.GravityDirection);
         }
@@ -122,7 +138,7 @@ namespace SimplePendulum
         /// 原点から測定した、球の座標のz座標を与える関数
         /// </summary>
         /// <returns>球の座標のz座標</returns>
-        private float GetSpherePosZ()
+        private Single GetSpherePosZ()
         {
             return (this.sphere.transform.position - this.origin).z;
         }
@@ -131,7 +147,7 @@ namespace SimplePendulum
         /// 座標と球が成す角を計算する
         /// </summary>
         /// <returns>座標と球が成す角</returns>
-        private float GetThetaDeg()
+        private Single GetThetaDeg()
         {
             var theta = this.GetSphereAndGravityAngle();
 
@@ -145,27 +161,42 @@ namespace SimplePendulum
         {
             // ラベルに経過時間tの値を表示する
             GUI.Label(
-                new Rect(20.0f, 20.0f, 350.0f, 20.0f),
+                new Rect(20.0f, 20.0f, 400.0f, 20.0f),
                 String.Format("経過時間{0:F3}（秒）", this.time));
 
+            // ラベルに数値的に求めた角度θの値を表示する
             GUI.Label(
-                new Rect(20.0f, 40.0f, 350.0f, 20.0f),
-                String.Format("厳密な計算による角度θ =                              {0:F3}°", this.GetThetaDeg()));
+                new Rect(20.0f, 40.0f, 400.0f, 20.0f),
+                String.Format("数値的に求めた角度θ =                                 {0:F3}°", this.GetThetaDeg()));
+
+            // ラベルに数値的に求めた速度vの値を表示する
+            GUI.Label(
+                new Rect(20.0f, 80.0f, 400.0f, 20.0f),
+                String.Format("数値的に求めた速度v =                                  {0:F3}(m/s)", Solveeomcs.SolveEoMcs.GetV()));
+
+            // ラベルに数値的に求めた全エネルギーの値を表示する
+            GUI.Label(
+                new Rect(20.0f, 120.0f, 400.0f, 20.0f),
+                String.Format("数値的に求めた全エネルギー =                                 {0:F3}(J)", Solveeomcs.SolveEoMcs.Total_Energy()));
 
             var ypos2 = 20.0f;
 
             // 「角度θ」と表示する
-            GUI.Label(new Rect(350.0f, ypos2, 100.0f, 20.0f), "角度θ");
+            GUI.Label(new Rect(400.0f, ypos2, 100.0f, 20.0f), "角度θ");
 
             ypos2 += 20.0f;
 
             // 角度を変更するスライダーを表示する
-            var thetadegbefore = this.thetadeg;
-            this.thetadeg = GUI.HorizontalSlider(new Rect(350.0f, ypos2, 100.0f, 20.0f), this.thetadeg, -180.0f, 180.0f);
-            if (Mathf.Abs(this.thetadeg - thetadegbefore) > Mathf.Epsilon)
+            var thetadegbefore = SimplePendulum.thetadeg;
+            SimplePendulum.thetadeg = GUI.HorizontalSlider(new Rect(400.0f, ypos2, 100.0f, 20.0f), SimplePendulum.thetadeg, -180.0f, 180.0f);
+            if (Mathf.Abs(SimplePendulum.thetadeg - thetadegbefore) > Mathf.Epsilon)
             {
-                var theta = Mathf.Deg2Rad * this.thetadeg;
+                SimplePendulum.IsAngelChange = true;
+
+                var theta = Mathf.Deg2Rad * SimplePendulum.thetadeg;
                 Solveeomcs.SolveEoMcs.SetTheta(theta);
+                Solveeomcs.SolveEoMcs.SetV(0.0f);
+
                 this.SphereRotate(theta);
                 this.RopeUpdate();
             }
@@ -173,7 +204,7 @@ namespace SimplePendulum
             var ypos3 = 20.0f;
 
             // 「Start」か「Stop」ボタンを表示する
-            if (GUI.Button(new Rect(470.0f, ypos3, 110.0f, 20.0f), this.buttontext))
+            if (GUI.Button(new Rect(520.0f, ypos3, 110.0f, 20.0f), this.buttontext))
             {
                 if (SimplePendulum.Exec)
                 {
@@ -190,12 +221,13 @@ namespace SimplePendulum
             ypos3 += 30.0f;
 
             // 「Reset」ボタンを表示する
-            if (GUI.Button(new Rect(470.0f, ypos3, 110.0f, 20.0f), "Reset"))
+            if (GUI.Button(new Rect(520.0f, ypos3, 110.0f, 20.0f), "Reset"))
             {
                 SimplePendulum.IsReset = true;
 
                 this.time = 0.0f;
 
+                SimplePendulum.thetadeg = this.firsttheta * Mathf.Rad2Deg;
                 Solveeomcs.SolveEoMcs.SetTheta(this.firsttheta);
                 Solveeomcs.SolveEoMcs.SetV(0.0f);
 
@@ -206,7 +238,7 @@ namespace SimplePendulum
             ypos3 += 30.0f;
 
             // 「Exit」ボタンを表示する
-            if (GUI.Button(new Rect(470.0f, ypos3, 110.0f, 20.0f), "Exit"))
+            if (GUI.Button(new Rect(520.0f, ypos3, 110.0f, 20.0f), "Exit"))
             {
                 Application.Quit();
             }
@@ -253,7 +285,7 @@ namespace SimplePendulum
         /// 球の角度を更新する
         /// </summary>
         /// <param name="theta">新しい角度</param>
-        private void SphereRotate(float theta)
+        private void SphereRotate(Single theta)
         {
             // rcosθの計算
             var rcostheta = this.ropeLength * Mathf.Cos(theta);
@@ -298,21 +330,19 @@ namespace SimplePendulum
         {
             this.ropeLength = Vector3.Distance(this.origin, this.sphere.transform.position);
 
-            this.thetadeg = this.GetThetaDeg();
+            SimplePendulum.thetadeg = this.GetThetaDeg();
 
             Solveeomcs.SolveEoMcs.Init(
                 this.ropeLength,
                 this.radius,
-                true,
-                false,
-                this.firsttheta = Mathf.Deg2Rad * this.thetadeg);
+                this.firsttheta = Mathf.Deg2Rad * SimplePendulum.thetadeg);
         }
 
         /// <summary>
         /// 球の状態を更新する
         /// </summary>
         /// <param name="frameTime">経過時間</param>
-        private void SphereUpdate(float frameTime)
+        private void SphereUpdate(Single frameTime)
         {
             // 運動方程式を解いてθを求める
             var theta = Solveeomcs.SolveEoMcs.NextStep(frameTime);

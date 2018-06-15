@@ -8,41 +8,8 @@
 
 int main()
 {
-    init(1.0f, 0.05f, false, true, 0.1745329f);
-    saveresult(0.001, "simple_harmonic_10.csv", 10.0);
-
-    init(1.0f, 0.05f, false, true, 0.5235988f);
-    saveresult(0.001, "simple_harmonic_30.csv", 10.0);
-
-    init(1.0f, 0.05f, false, true, 1.0471976f);
-    saveresult(0.001, "simple_harmonic_60.csv", 10.0);
-
-    init(1.0f, 0.05f, false, true, 1.5707963f);
-    saveresult(0.001, "simple_harmonic_90.csv", 10.0);
-
-    init(1.0f, 0.05f, false, true, 3.1241394f);
-    saveresult(0.001, "simple_harmonic_179.csv", 10.0);
-
-    init(1.0f, 0.05f, false, false, 0.1745329f);
-    saveresult(0.001, "exact_10.csv", 10.0);
-
-    init(1.0f, 0.05f, false, false, 0.5235988f);
-    saveresult(0.001, "exact_30.csv", 10.0);
-
-    init(1.0f, 0.05f, false, false, 1.0471976f);
-    saveresult(0.001, "exact_60.csv", 10.0);
-
-    init(1.0f, 0.05f, false, false, 1.5707963f);
-    saveresult(0.001, "exact_90.csv", 10.0);
-
-    init(1.0f, 0.05f, false, false, 3.1241394f);
-    saveresult(0.001, "exact_179.csv", 10.0);
-
-    //init(1.0f, 0.05f, false, false, 3.1241394f);
-    //saveresult(0.001, "air_resistance_no_179.csv", 30.0);
-
-    init(1.0f, 0.05f, true, false, 1.047197551f);
-    saveresult(0.001, "air_resistance_yes_60.csv", 30.0);
+    init(1.0f, 0.05f, 1.047197551f);
+    saveresult(0.001, "deg_60.csv", 30.0);
 
     return 0;
 }
