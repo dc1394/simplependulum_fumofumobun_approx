@@ -51,7 +51,12 @@ extern "C" {
     {
         (*pse)(dt, filename, t);
     }
-	    
+
+	void __stdcall setisconsider_inertial_resistance(bool isconsider_inertial_resistance)
+    {
+		pse->Isconsider_Inertial_Resistance = isconsider_inertial_resistance;
+    }
+
     void __stdcall settheta(float theta)
     {
         pse->Theta = theta;
@@ -69,7 +74,7 @@ extern "C" {
 
     void __stdcall setv(float v)
     {
-        pse->V(v);
+        pse->V = v;
     }
 
 	void __stdcall timereset()

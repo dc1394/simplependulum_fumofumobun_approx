@@ -151,32 +151,32 @@ namespace SimplePendulum
                 String.Format("@fumofumobunさんの近似関数による全エネルギー = {0:F3}(J)", kinetic + potential),
                 guiStyle);
 
-
-            // 角度θが変更された際の処理
-            if (SimplePendulum.IsAngelChange)
+            // 角度θが変更されたか、「Reset」ボタンが押された際の処理
+            if (SimplePendulum.IsChangeOfState)
             {
-                var theta = Mathf.Deg2Rad * SimplePendulum.Thetadeg;
-
-                Solveeomcs.SolveEoMcs.TimeReset();
-                Solveeomcs.SolveEoMcs.SetTheta0(theta);
-                
-                this.SphereRotate(theta);
-                this.RopeUpdate();
-                
-                SimplePendulum.IsAngelChange = false;
+                this.Reset(Mathf.Deg2Rad * SimplePendulum.Thetadeg);
             }
 
             // 「Reset」ボタンの処理
-            if (SimplePendulum.IsReset)
+            if (SimplePendulum.IsChangeOfState)
             {
-                Solveeomcs.SolveEoMcs.SetTheta0(this.firsttheta);
-                Solveeomcs.SolveEoMcs.TimeReset();
-
-                this.SphereRotate(this.firsttheta);
-                this.RopeUpdate();
-
-                SimplePendulum.IsReset = false;
+                this.Reset(this.firsttheta);
             }
+        }
+
+        /// <summary>
+        /// 角度θを指定して、時刻0の状態に戻す
+        /// </summary>
+        /// <param name="theta">角度θ</param>
+        private void Reset(float theta)
+        {
+            Solveeomcs.SolveEoMcs.TimeReset();
+            Solveeomcs.SolveEoMcs.SetTheta0(theta);
+
+            this.SphereRotate(theta);
+            this.RopeUpdate();
+
+            SimplePendulum.IsChangeOfState = false;
         }
 
         /// <summary>

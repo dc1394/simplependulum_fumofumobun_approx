@@ -59,7 +59,7 @@ namespace Solveeomcs
         /// <param name="v">速度</param>
         /// <returns>運動エネルギー</returns>
         [DllImport("solveeom", EntryPoint = "kinetic_energy")]
-        public static extern float Kinetic_Energy(double v);
+        public static extern float Kinetic_Energy(Double v);
 
         /// <summary>
         /// 次のステップを計算する
@@ -75,8 +75,15 @@ namespace Solveeomcs
         /// <param name="theta">角度</param>
         /// <returns>ポテンシャルエネルギー</returns>
         [DllImport("solveeom", EntryPoint = "potential_energy")]
-        public static extern Single Potential_Energy(double theta);
+        public static extern Single Potential_Energy(Double theta);
 
+        /// <summary>
+        /// 慣性抵抗を考慮するかどうかに対するsetter
+        /// </summary>
+        /// <param name="isconsiderInertialResistance">慣性抵抗を考慮するかどうか</param>
+        [DllImport("solveeom", EntryPoint = "setisconsider_inertial_resistance")]
+        public static extern void SetIsconsider_Inertial_Resistance(Boolean isconsiderInertialResistance);
+        
         /// <summary>
         /// 角度θの値に対するsetter
         /// </summary>

@@ -53,6 +53,11 @@ namespace SimplePendulum
         private Single firsttheta;
 
         /// <summary>
+        /// 慣性抵抗を考慮するかどうか
+        /// </summary>
+        private Boolean isconsiderInertialResistance = false;
+
+        /// <summary>
         /// 原点の座標
         /// </summary>
         [SerializeField]
@@ -103,12 +108,7 @@ namespace SimplePendulum
         /// <summary>
         /// 「Reset」ボタンが押されたかどうかへのプロパティ
         /// </summary>
-        internal static Boolean IsReset { get; set; }
-
-        /// <summary>
-        /// 角度θが変更されたかどうかへのプロパティ
-        /// </summary>
-        internal static Boolean IsAngelChange { get; set; }
+        internal static Boolean IsChangeOfState { get; set; }
 
         /// <summary>
         /// 角度θ(deg)へのプロパティ
@@ -196,29 +196,33 @@ namespace SimplePendulum
             var ypos2 = 20.0f;
 
             // 「角度θ」と表示する
-            GUI.Label(new Rect(450.0f, ypos2, 100.0f, 20.0f), "角度θ");
+            GUI.Label(new Rect(470.0f, ypos2, 100.0f, 20.0f), "角度θ");
 
             ypos2 += 20.0f;
 
             // 角度を変更するスライダーを表示する
             var thetadegbefore = SimplePendulum.thetadeg;
-            SimplePendulum.thetadeg = GUI.HorizontalSlider(new Rect(450.0f, ypos2, 100.0f, 20.0f), SimplePendulum.thetadeg, -180.0f, 180.0f);
+            SimplePendulum.thetadeg = GUI.HorizontalSlider(new Rect(470.0f, ypos2, 100.0f, 20.0f), SimplePendulum.thetadeg, -180.0f, 180.0f);
             if (Mathf.Abs(SimplePendulum.thetadeg - thetadegbefore) > Mathf.Epsilon)
             {
-                SimplePendulum.IsAngelChange = true;
+                this.Reset(Mathf.Deg2Rad * SimplePendulum.thetadeg);
+            }
 
-                var theta = Mathf.Deg2Rad * SimplePendulum.thetadeg;
-                Solveeomcs.SolveEoMcs.SetTheta(theta);
-                Solveeomcs.SolveEoMcs.SetV(0.0f);
+            ypos2 += 20.0f;
 
-                this.SphereRotate(theta);
-                this.RopeUpdate();
+            // 慣性抵抗を考慮するかどうかのチェックボックスを表示する
+            var isconsiderInertialResistanceBefore = this.isconsiderInertialResistance;
+            this.isconsiderInertialResistance = GUI.Toggle(new Rect(470.0f, ypos2, 110.0f, 20.0f), this.isconsiderInertialResistance, "慣性抵抗を考慮");
+            if (isconsiderInertialResistanceBefore != this.isconsiderInertialResistance)
+            {
+                Solveeomcs.SolveEoMcs.SetIsconsider_Inertial_Resistance(this.isconsiderInertialResistance);
+                this.Reset(this.firsttheta);
             }
 
             var ypos3 = 20.0f;
 
             // 「Start」か「Stop」ボタンを表示する
-            if (GUI.Button(new Rect(580.0f, ypos3, 110.0f, 20.0f), this.buttontext))
+            if (GUI.Button(new Rect(600.0f, ypos3, 110.0f, 20.0f), this.buttontext))
             {
                 if (SimplePendulum.Exec)
                 {
@@ -235,27 +239,36 @@ namespace SimplePendulum
             ypos3 += 30.0f;
 
             // 「Reset」ボタンを表示する
-            if (GUI.Button(new Rect(580.0f, ypos3, 110.0f, 20.0f), "Reset"))
+            if (GUI.Button(new Rect(600.0f, ypos3, 110.0f, 20.0f), "Reset"))
             {
-                SimplePendulum.IsReset = true;
-
-                this.time = 0.0f;
-
-                SimplePendulum.thetadeg = this.firsttheta * Mathf.Rad2Deg;
-                Solveeomcs.SolveEoMcs.SetTheta(this.firsttheta);
-                Solveeomcs.SolveEoMcs.SetV(0.0f);
-
-                this.SphereRotate(this.firsttheta);
-                this.RopeUpdate();
+                this.Reset(this.firsttheta);
             }
 
             ypos3 += 30.0f;
 
             // 「Exit」ボタンを表示する
-            if (GUI.Button(new Rect(580.0f, ypos3, 110.0f, 20.0f), "Exit"))
+            if (GUI.Button(new Rect(600.0f, ypos3, 110.0f, 20.0f), "Exit"))
             {
                 Application.Quit();
             }
+        }
+
+        /// <summary>
+        /// 角度θを指定して、時刻0の状態に戻す
+        /// </summary>
+        /// <param name="theta">角度θ</param>
+        private void Reset(float theta)
+        {
+            SimplePendulum.IsChangeOfState = true;
+
+            this.time = 0.0f;
+
+            SimplePendulum.thetadeg = theta * Mathf.Rad2Deg;
+            Solveeomcs.SolveEoMcs.SetTheta(theta);
+            Solveeomcs.SolveEoMcs.SetV(0.0f);
+
+            this.SphereRotate(theta);
+            this.RopeUpdate();
         }
 
         /// <summary>
@@ -289,7 +302,7 @@ namespace SimplePendulum
         private void Start()
         {
             SimplePendulum.Exec = false;
-            SimplePendulum.IsReset = false;
+            SimplePendulum.IsChangeOfState = false;
 
             this.enabled = true;
             this.PendulumInit();

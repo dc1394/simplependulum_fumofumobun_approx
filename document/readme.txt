@@ -1,16 +1,18 @@
 ================================================================================
-【 ソフト名 】simplependulum
+【 ソフト名 】simplependulum_fumofumo_approx
 【  作成者  】@dc1394
 ================================================================================
 
 ★これは何？
-　UnityとC++で単振り子のシミュレーションを行うプログラムです。
+　UnityとC++で単振り子のシミュレーションを行い、@fumofumobunさんが考案した近似関
+　数と比較するコードです。
+　ビルドには、以下のライブラリ及びゲームエンジンが必要です。
+　・Boost C++ Libraries
+　・Unity 2018.1.3f1
 
 ★更新履歴
-　2016/02/21 ver.0.1   とりあえず公開。
-　2016/02/26 ver.0.11  細かい修正（バグ修正等）。「Reset」ボタンと「Exit」ボタ
-                       ンの追加。
-　2016/02/28 ver.0.12  細かい修正。
+　2018/06/16 ver.0.1  とりあえず公開。
+　2018/06/16 ver.0.2  慣性抵抗を考慮するかどうか選べるようにした。
 
 ★謝辞
 　このコードのCameraController.csは、「@TAK-EMI」様の「Unityでメタセコイアのよ
@@ -21,8 +23,8 @@
 ★ライセンス
 　このソフトはフリーソフトウェアです（2条項BSDライセンス）。
 --------------------------------------------------------------------------------
-　simplependulum
-　Copyright (C) 2016 @dc1394
+　simplependulum_fumofumo_approx
+　Copyright (C) 2018 @dc1394
 　All rights reserved.
 
 　ソースコード形式であれバイナリ形式であれ、変更の有無に関わらず、以下の条件を満
@@ -44,7 +46,7 @@
 　な損害、特別損害、懲罰的損害または結果損害のいずれに対しても一切責任を負いませ
 　ん。
 
-  Copyright (c) 2016, @dc1394
+  Copyright (c) 2018, @dc1394
   All rights reserved.
 
   Redistribution and use in source and binary forms, with or without
@@ -69,7 +71,8 @@
   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 --------------------------------------------------------------------------------
 
-  simplependulumにはBoostコミュニティによるBoost C++ Librariesを使用しています。
+  simplependulum_fumofumo_approxには、BoostコミュニティによるBoost C++ Libraries
+  を使用しています。
   こちらのライセンスは Boostライセンス になります。
 
 /* Boost Software License - Version 1.0 - August 17th, 2003
@@ -97,6 +100,10 @@
 * DEALINGS IN THE SOFTWARE.
 */
 
-  simplependulumにはUnity TechnologiesによるUnityを使用しています。こちらのラ
-  イセンスは Unity ソフトウェアライセンス契約 に従います。
+　simplependulum_fumofumo_approxには、Chaser324氏によるunity-wireframe (
+　https://github.com/Chaser324/unity-wireframe )を使用しています。
+　こちらのライセンスは MITライセンス になります。
+
+  simplependulum_fumofumo_approxには、Unity TechnologiesによるUnityを使用してい
+  ます。こちらのライセンスは Unity ソフトウェアライセンス契約 に従います。
 　（ http://japan.unity3d.com/company/legal/eula ）。

@@ -143,6 +143,12 @@ namespace solveeom {
         // #region プロパティ
 
     public:
+		//! A property.
+		/*!
+			慣性抵抗を考慮するかどうかへのプロパティ
+		*/
+		Property<float> Isconsider_Inertial_Resistance;
+
         //! A property.
         /*!
             角度θへのプロパティ
@@ -183,7 +189,13 @@ namespace solveeom {
             空気の密度（kg/m^3）
         */
         static auto constexpr AIRRHO = 1.205;
-        
+
+		//! A private static member variable (constant expression).
+		/*!
+			空気の動粘度
+		*/
+		static auto constexpr AIRNYU = SolveEoM::AIRMYU / SolveEoM::AIRRHO;
+		
         //! A private static member variable (constant expression).
         /*!
             アルミニウムの密度（kg/m^3）
@@ -208,24 +220,24 @@ namespace solveeom {
         */
         static auto constexpr g = 9.80665;
 
-        //! A private static member variable (constant expression).
-        /*!
-            水の粘度
-        */
-        static auto constexpr WATERMYU = 1.004E-3;
+		//! A private static member variable (constant expression).
+		/*!
+			レイノルズ数の閾値
+		*/
+		static auto constexpr REYNOLDS_THRESHOLD = 0.1;
 
-        //! A private static member variable (constant expression).
-        /*!
-            水の密度（kg/m^3）
-        */
-        static auto constexpr WATERRHO = 998.203;
+		//! A private member variable.
+		/*!
+			棒の端から球までの長さ
+		*/
+		bool isconsider_inertial_resistance_ = false;
 
         //! A private member variable.
         /*!
             棒の端から球までの長さ
         */
         double l_;
-
+				
 		//! A private member variable.
 		/*!
 			振動の係数
@@ -238,24 +250,18 @@ namespace solveeom {
         */
         double r_;
 
-        //! A private member variable.
-        /*!
-            球の質量
-        */
-        double m_;
-
-        //! A private member variable.
-        /*!
-            粘度
-        */
-        double myu_;
+		//! A private member variable.
+		/*!
+			球の質量
+		*/
+		double m_;
 
 		//! A private member variable.
 		/*!
 			粘性抵抗の係数
 		*/
 		double const gamma_;
-        
+
 		//! A private member variable.
         /*!
             Bulirsch-Stoer法のBoost.ODEIntオブジェクト

@@ -94,6 +94,13 @@ extern "C" {
     DLLEXPORT void __stdcall saveresult(double dt, std::string const & filename, double t);
 
 	//! A global function.
+	/*!
+		慣性抵抗を考慮するかどうかに対するsetter
+		\param isconsider_inertial_resistance 慣性抵抗を考慮するかどうか
+	*/
+	DLLEXPORT void __stdcall setisconsider_inertial_resistance(bool isconsider_inertial_resistance);
+
+	//! A global function.
     /*!
         角度θの値に対するsetter
         \param theta 設定する角度θ
