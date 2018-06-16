@@ -11,7 +11,7 @@
 　・Unity 2018.1.3f1
 
 ★更新履歴
-　2018/06/15 ver.0.1  とりあえず公開。
+　2018/06/16 ver.0.1  とりあえず公開。
 
 ★謝辞
 　このコードのCameraController.csは、「@TAK-EMI」様の「Unityでメタセコイアのよ
@@ -23,7 +23,7 @@
 　このソフトはフリーソフトウェアです（2条項BSDライセンス）。
 --------------------------------------------------------------------------------
 　simplependulum_fumofumo_approx
-　Copyright (C) 2016-2018 @dc1394
+　Copyright (C) 2018 @dc1394
 　All rights reserved.
 
 　ソースコード形式であれバイナリ形式であれ、変更の有無に関わらず、以下の条件を満
@@ -45,7 +45,7 @@
 　な損害、特別損害、懲罰的損害または結果損害のいずれに対しても一切責任を負いませ
 　ん。
 
-  Copyright (c) 2016-2018, @dc1394
+  Copyright (c) 2018, @dc1394
   All rights reserved.
 
   Redistribution and use in source and binary forms, with or without
